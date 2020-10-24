@@ -38,19 +38,19 @@ data/
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, MaxPool2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
-
+import matplotlib.pyplot as plt
 
 # dimensions of our images.
-img_width, img_height = 100, 100
+img_width, img_height = 75, 75
 
 train_data_dir = 'data_3/train'
 validation_data_dir = 'data_3/validation'
 nb_train_samples = 400
 nb_validation_samples = 130
-epochs = 128
+epochs = 256
 batch_size = 16
 
 if K.image_data_format() == 'channels_first':
@@ -58,28 +58,24 @@ if K.image_data_format() == 'channels_first':
 else:
     input_shape = (img_width, img_height, 3)
 
+# Creating a Sequential model
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=input_shape))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Conv2D(32, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Conv2D(64, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(kernel_size=(3, 3), filters=32, activation='tanh', input_shape=(img_width, img_height, 3,)))
+model.add(Conv2D(filters=30, kernel_size=(3, 3), activation='tanh'))
+model.add(MaxPool2D(2, 2))
+model.add(Conv2D(filters=30, kernel_size=(3, 3), activation='tanh'))
+model.add(MaxPool2D(2, 2))
+model.add(Conv2D(filters=30, kernel_size=(3, 3), activation='tanh'))
 
 model.add(Flatten())
-model.add(Dense(64))
-model.add(Activation('relu'))
+
 model.add(Dropout(0.5))
-model.add(Dense(7))
-model.add(Activation('sigmoid'))  # softmax, sigmoid
+model.add(Dense(20, activation='relu'))
+model.add(Dense(15, activation='relu'))
+model.add(Dense(7, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
-              optimizer='rmsprop',  #adam, rmsprop
+              optimizer='rmsprop',  # adam, rmsprop
               metrics=['accuracy'])
 
 # this is the augmentation configuration we will use for training
@@ -91,7 +87,11 @@ train_datagen = ImageDataGenerator(
 
 # this is the augmentation configuration we will use for testing:
 # only rescaling
-test_datagen = ImageDataGenerator(rescale=1. / 255)
+test_datagen = ImageDataGenerator(
+    rescale=1. / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
 
 train_generator = train_datagen.flow_from_directory(
     train_data_dir,
@@ -105,11 +105,19 @@ validation_generator = test_datagen.flow_from_directory(
     batch_size=batch_size,
     class_mode='categorical')
 
-model.fit_generator(
+history = model.fit_generator(
     train_generator,
     steps_per_epoch=nb_train_samples // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size)
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
 
 model.save_weights('first_try.h5')
