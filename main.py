@@ -34,6 +34,7 @@ data/
             cat002.jpg
             ...
 ```
+test
 '''
 
 from keras.preprocessing.image import ImageDataGenerator
