@@ -155,7 +155,7 @@ for imagePath in paths.list_images('data_3/validation/Milk'):
     x = x.reshape(1, img_width, img_height, 3).astype('float')
     x /= 255
 
-    probablities = model.predict(x)
+    probabilities = model.predict(x)
     prediction = probabilities.argmax(axis=0)
 
     label = "prediction: " + CLASSES[prediction] + " " + probabilities[prediction]*100 + "%"
