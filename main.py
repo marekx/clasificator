@@ -122,3 +122,37 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 model.save_weights('first_try.h5')
+
+
+# load the network
+# model = load_model(args["model"])
+
+def image_to_feature_vector(image_local, size=(100, 100)):
+    # resize the image to a fixed size, then flatten the image into
+    # a list of raw pixel intensities
+    return cv2.resize(image_local, size).flatten()
+
+
+CLASSES = ['Cereal', 'Chips', 'Chocolate', 'Deo', 'Ketchup', 'Milk', 'Shampoo']
+
+
+# loop over our testing images
+for imagePath in paths.list_images('data_3/validation/Milk'):
+
+    print("[INFO] classifying {}".format(
+        imagePath[imagePath.rfind("/") + 1:]))
+    image = P.image.load_img(imagePath, target_size=(img_height, img_width))
+    x = P.image.img_to_array(image)
+    x = x.reshape(1, img_width, img_height, 3).astype('float')
+    x /= 255
+
+    probablities = model.predict(x)
+    prediction = probabilities.argmax(axis=0)
+
+    label = "prediction: " + CLASSES[prediction] + " " + probabilities[prediction]*100 + "%"
+
+    cv2.putText(image, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
+                1.0, (0, 255, 0), 3)
+    cv2.imshow("Image", image)
+    cv2.waitKey(0)
+
