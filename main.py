@@ -37,12 +37,21 @@ data/
 test
 '''
 
+from __future__ import print_function
+from keras.optimizers import Nadam
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, MaxPool2D
 from keras.layers import Activation, Dropout, Flatten, Dense
-from keras import backend as K
+from keras import backend as K, preprocessing as P
 import matplotlib.pyplot as plt
+
+from keras.models import load_model
+from imutils import paths
+import numpy as np
+import argparse
+import imutils
+import cv2
 
 # dimensions of our images.
 img_width, img_height = 75, 75
