@@ -164,4 +164,3 @@ for imagePath in paths.list_images('data_3/validation/Milk'):
                 1.0, (0, 255, 0), 3)
     cv2.imshow("Image", image)
     cv2.waitKey(0)
-
