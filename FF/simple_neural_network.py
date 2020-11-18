@@ -33,11 +33,12 @@ args = vars(ap.parse_args())
 # grab the list of images that we'll be describing
 print("[INFO] describing images...")
 imagePaths = list(paths.list_images(args["dataset"]))
-
 # initialize the data matrix and labels list
 data = []
 labels = []
-
+#####################
+# print(data)
+# print(labels)
 # loop over the input images
 for (i, imagePath) in enumerate(imagePaths):
     # load the image and extract the class label (assuming that our
@@ -58,20 +59,27 @@ for (i, imagePath) in enumerate(imagePaths):
 # encode the labels, converting them from strings to integers
 le = LabelEncoder()
 labels = le.fit_transform(labels)
-
+########################
+# print(le)
+# print(labels)
 # scale the input image pixels to the range [0, 1], then transform
 # the labels into vectors in the range [0, num_classes] -- this
 # generates a vector for each label where the index of the label
 # is set to `1` and all other entries to `0`
 data = np.array(data) / 255.0
 labels = np_utils.to_categorical(labels, 2)
-
+########################
+# print(data)
+# print(labels)
 # partition the data into training and testing splits, using 75%
 # of the data for training and the remaining 25% for testing
 print("[INFO] constructing training/testing split...")
 (trainData, testData, trainLabels, testLabels) = train_test_split(
     data, labels, test_size=0.25, random_state=42)
-
+#######################
+# print(trainData)
+# print("test ssssssssssssssssssssssssss")
+# print("".join([str(x) for x in trainData]))
 # define the architecture of the network
 model = Sequential()
 model.add(Dense(768, input_dim=3072, init="uniform",
@@ -85,7 +93,7 @@ print("[INFO] compiling model...")
 sgd = SGD(lr=0.01)
 model.compile(loss="binary_crossentropy", optimizer=sgd,
               metrics=["accuracy"])
-model.fit(trainData, trainLabels, epochs=50, batch_size=128,
+model.fit(trainData, trainLabels, epochs=100, batch_size=128,
           verbose=1)
 
 # show the accuracy on the testing set

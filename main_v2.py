@@ -10,7 +10,7 @@ datagen = ImageDataGenerator(
         zoom_range=0.2,
         horizontal_flip=True)
 
-img = load_img('data_3/train/Ketchup/Ketchup_0.jpg')
+img = load_img('data_3/train/Ketchup/Ketchup__0.jpg')
 x = img_to_array(img)  # this is a Numpy array with shape (3, 150, 150)
 x = x.reshape((1,) + x.shape)  # this is a Numpy array with shape (1, 3, 150, 150)
 
@@ -18,7 +18,7 @@ x = x.reshape((1,) + x.shape)  # this is a Numpy array with shape (1, 3, 150, 15
 # and saves the results to the `preview/` directory
 i = 0
 for batch in datagen.flow(x, batch_size=1,
-                          save_to_dir='preview', save_prefix='ketchup', save_format='jpeg'):
+                          save_to_dir='FF_2.0/more', save_prefix='ketchup', save_format='jpeg'):
     i += 1
     if i > 20:
         break  # otherwise the generator would loop indefinitely
