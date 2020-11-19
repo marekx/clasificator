@@ -28,8 +28,8 @@ ap.add_argument("-b", "--batch-size", type=int, default=32,
 args = vars(ap.parse_args())
 
 # initialize the class labels for the Kaggle dogs vs cats dataset
-CLASSES = ["Tomato", "Orange", "Banana", "Apple", "Watermelon", "Peach", "Pineapple"]
-
+CLASSES = ["Apple", "Banana", "Kiwi", "Orange", "Peach", "Tomato"]
+# CLASSES = ["Apple", "Banana", "Lemon"]
 # load the network
 print("[INFO] loading network architecture and weights...")
 model = load_model(args["model"])
@@ -53,8 +53,7 @@ for imagePath in paths.list_images(args["test_images"]):
     # draw the class and probability on the test image and display it
     # to our screen
 
-    label = "{}: {:.2f}%".format(CLASSES[prediction],
-                                 probs[prediction] * 100)
+    label = "{}: {:.2f}%".format(CLASSES[prediction], probs[prediction] * 100)
     cv2.putText(image, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (100, 255, 0), 3)
     cv2.imshow("Image", image)
     cv2.waitKey(0)

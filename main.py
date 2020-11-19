@@ -56,11 +56,11 @@ import cv2
 # dimensions of our images.
 img_width, img_height = 75, 75
 
-train_data_dir = 'data_3/train'
-validation_data_dir = 'data_3/validation'
-nb_train_samples = 400
-nb_validation_samples = 130
-epochs = 256
+train_data_dir = 'FF_2.0/train_data_CNN/train'
+validation_data_dir = 'FF_2.0/train_data_CNN/train'
+nb_train_samples = 2940
+nb_validation_samples = 60
+epochs = 100
 batch_size = 16
 
 if K.image_data_format() == 'channels_first':
@@ -82,7 +82,7 @@ model.add(Flatten())
 model.add(Dropout(0.5))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(15, activation='relu'))
-model.add(Dense(7, activation='softmax'))
+model.add(Dense(6, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',  # adam, rmsprop
@@ -124,13 +124,21 @@ history = model.fit_generator(
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
-plt.title('model accuracy')
+plt.title('model train vs validation accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-model.save_weights('first_try.h5')
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model train vs validation loss ')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+model.save_weights('CNNtd2940_vd60_e100_b16_v1.h5')
 
 
 # load the network
@@ -142,25 +150,25 @@ def image_to_feature_vector(image_local, size=(100, 100)):
     return cv2.resize(image_local, size).flatten()
 
 
-CLASSES = ['Cereal', 'Chips', 'Chocolate', 'Deo', 'Ketchup', 'Milk', 'Shampoo']
+CLASSES = ["Apple", "Banana", "Kiwi", "Orange", "Peach", "Tomato"]
 
 
-# loop over our testing images
-for imagePath in paths.list_images('data_3/validation/Milk'):
-
-    print("[INFO] classifying {}".format(
-        imagePath[imagePath.rfind("/") + 1:]))
-    image = P.image.load_img(imagePath, target_size=(img_height, img_width))
-    x = P.image.img_to_array(image)
-    x = x.reshape(1, img_width, img_height, 3).astype('float')
-    x /= 255
-
-    probabilities = model.predict(x)
-    prediction = probabilities.argmax(axis=0)
-
-    label = "prediction: " + CLASSES[prediction] + " " + probabilities[prediction]*100 + "%"
-
-    cv2.putText(image, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
-                1.0, (0, 255, 0), 3)
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
+# # loop over our testing images
+# for imagePath in paths.list_images('data_3/validation/Milk'):
+#
+#     print("[INFO] classifying {}".format(
+#         imagePath[imagePath.rfind("/") + 1:]))
+#     image = P.image.load_img(imagePath, target_size=(img_height, img_width))
+#     x = P.image.img_to_array(image)
+#     x = x.reshape(1, img_width, img_height, 3).astype('float')
+#     x /= 255
+#
+#     probabilities = model.predict(x)
+#     prediction = probabilities.argmax(axis=0)
+#
+#     label = "prediction: " + CLASSES[prediction] + " " + probabilities[prediction]*100 + "%"
+#
+#     cv2.putText(image, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
+#                 1.0, (0, 255, 0), 3)
+#     cv2.imshow("Image", image)
+#     cv2.waitKey(0)
